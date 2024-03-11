@@ -29,5 +29,7 @@ void bfs(int i){
 }
 
 void main(){
+    printf("0\t");
+    visited[0] = 1;
     bfs(0);
 }
