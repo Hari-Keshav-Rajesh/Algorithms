@@ -1,2 +1,2 @@
-# DAA
-Algorithms from DAA
+# Algorithms
+List of algorithms written in C
