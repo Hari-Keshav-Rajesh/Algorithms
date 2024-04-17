@@ -1,83 +1,51 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 
-#define V 5
+#define MAX 256
 
-typedef struct Edge{
-    int src,dst,weight;
-}edge;
+void createShiftTable(int shiftTable[MAX],char* pattern){
+    int m = strlen(pattern);
 
-typedef struct Subset{
-    int parent,rank;
-}subset;
+    for(int i=0;i<MAX;i++)
+        shiftTable[i] = m;
 
-int find(subset subsets[],int i){
-    if(subsets[i].parent!=i){
-        subsets[i].parent = find(subsets,subsets[i].parent);
-    }
-    return subsets[i].parent;
+    for(int i=0;i<m;i++)
+        shiftTable[(int)pattern[i]] = m-i-1;
 }
 
-void Union(subset subsets[],int x,int y){
-    int xroot = find(subsets,x);
-    int yroot = find(subsets,y);
+int horspool(char* text,char * pattern){
+    int m = strlen(pattern);
+    int n = strlen(text);
 
-    if(subsets[xroot].rank<subsets[yroot].rank){
-        subsets[xroot].parent = yroot;
-    }
-    else if(subsets[xroot].rank>subsets[yroot].rank){
-        subsets[yroot].parent = xroot;
-    }
-    else{
-        subsets[yroot].parent = xroot;
-        subsets[xroot].rank++;
-    }
-}
+    int shiftTable[MAX];
 
-void Kruskal(edge edges[]){
-    edge MST[V];
-    subset subsets[V];
+    createShiftTable(shiftTable,pattern);
 
-    for(int i=0;i<V;i++){
-        subsets[i].parent = i;
-        subsets[i].rank = 0;
+    int i = m - 1,j;
+
+    while(i<n){
+        j = 0;
+        while(j<m&&text[i-j]==pattern[m-1-j])
+            j++;
+        if(j==m)
+            return i-m+1;
+        else
+            i+=shiftTable[(int)text[i]];
     }
-
-    edge temp;
-    for(int i=0;i<V-1;i++){
-        for(int j=0;j<V-i-1;j++){
-            if(edges[j].weight>edges[j+1].weight){
-                temp = edges[j];
-                edges[j] = edges[j+1];
-                edges[j+1] = temp; 
-            }
-        }
-    }
-
-    int e = 0;
-    for(int i=0;i<V-1 && e<V-1;i++){
-        int x = find(subsets,edges[i].src);
-        int y = find(subsets,edges[i].dst);
-
-        if(x!=y){
-            MST[e++] = edges[i];
-            Union(subsets,x,y);
-        }
-    }
-
-    printf("Edge/Weight\n");
-    for(int i=0;i<e;i++){
-        printf("%d - %d\t%d\n",MST[i].src,MST[i].dst,MST[i].weight);
-    }
+    return -1;
 }
 
 int main() {
-    struct Edge edges[] = {
-        {0, 1, 2}, {0, 3, 6}, {1, 2, 3}, {1, 3, 8}, {1, 4, 5},
-        {2, 4, 7}, {3, 4, 9}
-    };
+    char *text = "The quick brown fox jumps over the lazy dog";
+    char *pattern = "fox";
 
-    Kruskal(edges);
+    int index = horspool(text, pattern);
+
+    if (index != -1) {
+        printf("Pattern found at index %d\n", index);
+    } else {
+        printf("Pattern not found\n");
+    }
 
     return 0;
 }

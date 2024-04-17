@@ -1,3 +1,14 @@
-    for (int i = 0; i < e; i++) {
-        printf("%d - %d \t%d \n", edges[i].src, edges[i].dst, edges[i].weight);
+int main() {
+    const char *text = "The quick brown fox jumps over the lazy dog";
+    const char *pattern = "fox";
+
+    int index = horspoolSearch(text, pattern);
+
+    if (index != -1) {
+        printf("Pattern found at index %d\n", index);
+    } else {
+        printf("Pattern not found\n");
     }
+
+    return 0;
+}
